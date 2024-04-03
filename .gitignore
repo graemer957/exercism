@@ -24,3 +24,10 @@ rust-project.json
 
 # End of https://www.toptal.com/developers/gitignore/api/rust,rust-analyzer
 
+#
+# Custom
+#
+
+# SVGs from `cargo flamegraph`
+flamegraph.svg
+
