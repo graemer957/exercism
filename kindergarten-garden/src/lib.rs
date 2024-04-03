@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 const STUDENTS: [&str; 12] = [
     "Alice", "Bob", "Charlie", "David", "Eve", "Fred", "Ginny", "Harriet", "Ileana", "Joseph",
     "Kincaid", "Larry",
@@ -7,13 +5,6 @@ const STUDENTS: [&str; 12] = [
 
 pub fn plants(diagram: &str, student: &str) -> Vec<&'static str> {
     let mut result = Vec::new();
-
-    let plant_types = HashMap::from([
-        ('G', "grass"),
-        ('C', "clover"),
-        ('R', "radishes"),
-        ('V', "violets"),
-    ]);
 
     let student_index = if let Some(student_index) = STUDENTS.iter().position(|s| s == &student) {
         student_index * 2 // Each student has 2 slots per row along the window sill
@@ -30,14 +21,15 @@ pub fn plants(diagram: &str, student: &str) -> Vec<&'static str> {
     ];
 
     for index in cup_indices {
-        let Some(plant_letter) = diagram.chars().nth(index) else {
-            return result;
-        };
-        let Some(plant_name) = plant_types.get(&plant_letter) else {
-            return result;
+        let plant_name = match diagram.chars().nth(index) {
+            Some('G') => "grass",
+            Some('C') => "clover",
+            Some('R') => "radishes",
+            Some('V') => "violets",
+            _ => return result,
         };
 
-        result.push(plant_name as &'static str);
+        result.push(plant_name);
     }
 
     result
