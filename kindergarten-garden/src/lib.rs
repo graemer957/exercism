@@ -4,13 +4,11 @@ const STUDENTS: [&str; 12] = [
 ];
 
 pub fn plants(diagram: &str, student: &str) -> Vec<&'static str> {
-    let mut result = Vec::new();
-
-    let student_index = if let Some(student_index) = STUDENTS.iter().position(|s| s == &student) {
-        student_index * 2 // Each student has 2 slots per row along the window sill
-    } else {
-        return result;
-    };
+    let student_index = STUDENTS
+        .iter()
+        .position(|s| s == &student)
+        .expect("Unknown student {s}!")
+        * 2; // Each student has 2 slots per row along the window sill
 
     let second_row_index = diagram.len() / 2 + 1; // (Ab)using rounding to ignore newline char
     let cup_indices = [
@@ -20,17 +18,14 @@ pub fn plants(diagram: &str, student: &str) -> Vec<&'static str> {
         second_row_index + student_index + 1,
     ];
 
-    for index in cup_indices {
-        let plant_name = match diagram.chars().nth(index) {
+    cup_indices
+        .iter()
+        .map(|index| match diagram.chars().nth(*index) {
             Some('G') => "grass",
             Some('C') => "clover",
             Some('R') => "radishes",
             Some('V') => "violets",
-            _ => return result,
-        };
-
-        result.push(plant_name);
-    }
-
-    result
+            _ => unreachable!("Unexpected plant in cup at index {index}!"),
+        })
+        .collect()
 }
