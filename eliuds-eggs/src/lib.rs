@@ -1,15 +1,17 @@
-pub fn egg_count(display_value: u32) -> usize {
-    if display_value == 0 {
-        return 0;
-    };
+pub fn egg_count(mut display_value: u32) -> usize {
+    // The use of standard libraries `count_ones` seems against the spirit of this challenge the
+    // function body would simply be `display_value.count_ones() as usize` ;-)
+    //
+    // See: https://doc.rust-lang.org/std/primitive.u32.html#method.count_ones
 
-    let number_of_bits = display_value.ilog2() + 1;
     let mut egg_total = 0;
-    for i in 0..number_of_bits {
-        let thing = 1 << i;
-        if (thing & display_value) == thing {
+
+    while display_value > 0 {
+        if display_value & 1 == 1 {
             egg_total += 1;
         }
+
+        display_value >>= 1;
     }
 
     egg_total
