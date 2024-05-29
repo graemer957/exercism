@@ -7,12 +7,10 @@ pub fn egg_count(mut display_value: u32) -> usize {
     let mut egg_total = 0;
 
     while display_value > 0 {
-        if display_value & 1 == 1 {
-            egg_total += 1;
-        }
+        egg_total += display_value & 1;
 
         display_value >>= 1;
     }
 
-    egg_total
+    egg_total as usize
 }
