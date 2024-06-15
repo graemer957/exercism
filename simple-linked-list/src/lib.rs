@@ -24,65 +24,30 @@ impl<T> SimpleLinkedList<T> {
     pub fn len(&self) -> usize {
         let mut count = 0;
         let mut current = &self.head;
-        while current.is_some() {
+        while let Some(node) = current {
             count += 1;
-            current = &current.as_ref().unwrap().next;
+            current = &node.next;
         }
 
         count
     }
 
     pub fn push(&mut self, element: T) {
-        let node = Some(Box::new(Node {
+        self.head = Some(Box::new(Node {
             value: element,
-            next: None,
+            next: self.head.take(),
         }));
-
-        match self.head.as_mut() {
-            None => self.head = node,
-            Some(mut current) => {
-                while current.next.is_some() {
-                    current = current.next.as_mut().unwrap();
-                }
-                current.next = node;
-            }
-        };
     }
 
     pub fn pop(&mut self) -> Option<T> {
-        self.head.as_ref()?;
+        let node = self.head.take()?;
+        self.head = node.next;
 
-        if self.head.as_ref().unwrap().next.is_none() {
-            return Some(self.head.take().unwrap().value);
-        }
-
-        let mut last = self.head.as_mut().unwrap();
-        while let Some(node) = last.next.as_ref() {
-            if node.next.is_none() {
-                break;
-            }
-            last = last.next.as_mut().unwrap();
-        }
-
-        Some(last.next.take().unwrap().value)
+        Some(node.value)
     }
 
     pub fn peek(&self) -> Option<&T> {
-        self.head.as_ref()?;
-
-        if self.head.as_ref()?.next.is_none() {
-            return Some(&self.head.as_ref()?.value);
-        }
-
-        let mut last = self.head.as_ref().unwrap();
-        while let Some(node) = last.next.as_ref() {
-            if node.next.is_none() {
-                break;
-            }
-            last = last.next.as_ref().unwrap();
-        }
-
-        Some(&last.next.as_ref()?.value)
+        self.head.as_ref().map(|node| &(node.value))
     }
 
     #[must_use]
@@ -124,10 +89,8 @@ impl<T> From<SimpleLinkedList<T>> for Vec<T> {
     fn from(mut linked_list: SimpleLinkedList<T>) -> Vec<T> {
         let mut result = Self::new();
 
-        let mut next = linked_list.head.take();
-        while let Some(node) = next {
-            result.push(node.value);
-            next = node.next;
+        while let Some(value) = linked_list.pop() {
+            result.insert(0, value);
         }
 
         result
