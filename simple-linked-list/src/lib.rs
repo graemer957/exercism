@@ -47,7 +47,7 @@ impl<T> SimpleLinkedList<T> {
     }
 
     pub fn peek(&self) -> Option<&T> {
-        self.head.as_ref().map(|node| &(node.value))
+        self.head.as_ref().map(|node| &node.value)
     }
 
     #[must_use]
@@ -87,10 +87,11 @@ impl<T> FromIterator<T> for SimpleLinkedList<T> {
 
 impl<T> From<SimpleLinkedList<T>> for Vec<T> {
     fn from(mut linked_list: SimpleLinkedList<T>) -> Vec<T> {
-        let mut result = Self::new();
+        let mut result = Self::with_capacity(linked_list.len());
+        linked_list = linked_list.rev();
 
         while let Some(value) = linked_list.pop() {
-            result.insert(0, value);
+            result.push(value);
         }
 
         result
