@@ -1,5 +1,18 @@
 use std::collections::HashSet;
 
+// This is not really a new iteration, but a note to anyone looking, or my future self
+// that there are two really good, short, solutions:
+// - https://exercism.org/tracks/rust/exercises/palindrome-products/solutions/mattnewport
+//   Clever and short solution, although I do not find it easy to follow
+// - https://exercism.org/tracks/rust/exercises/palindrome-products/solutions/petertseng
+//   Similar to mine, but slightly different approach and much faster, due to cleverly cutting down
+//   the range of numbers to check
+//
+// I took a **long** time to produce this solution, mainly as I investigated a number of different
+// approaches and spent some time on performance optimisations (using `cargo flamegraph`). In
+// release mode it _looks like_ most of the time is spent calculating the palindrone, which I am
+// not able to speed up more than this
+
 /// `Palindrome` is a newtype which only exists when the contained value is a palindrome number in base ten.
 ///
 /// A struct with a single field which is used to constrain behavior like this is called a "newtype", and its use is
