@@ -27,13 +27,17 @@ pub mod graph {
         pub fn with_attrs(mut self, attrs: &[(&str, &str)]) -> Self {
             self.attrs = attrs
                 .iter()
-                .map(|(key, value)| (key.to_string(), value.to_string()))
+                .map(|(key, value)| ((*key).to_string(), (*value).to_string()))
                 .collect();
             self
         }
 
-        pub fn get_node(&self, name: &str) -> Option<&Node> {
+        pub fn node(&self, name: &str) -> Option<&Node> {
             self.nodes.iter().find(|node| node.name == name)
+        }
+
+        pub fn attr(&self, key: &str) -> Option<&str> {
+            self.attrs.get(key).map(String::as_str)
         }
     }
 
@@ -50,7 +54,7 @@ pub mod graph {
 
             impl Edge {
                 pub fn new(left: &str, right: &str) -> Self {
-                    Edge {
+                    Self {
                         left: left.to_string(),
                         right: right.to_string(),
                         ..Self::default()
@@ -60,9 +64,13 @@ pub mod graph {
                 pub fn with_attrs(mut self, attrs: &[(&str, &str)]) -> Self {
                     self.attrs = attrs
                         .iter()
-                        .map(|(key, value)| (key.to_string(), value.to_string()))
+                        .map(|(key, value)| ((*key).to_string(), (*value).to_string()))
                         .collect();
                     self
+                }
+
+                pub fn attr(&self, key: &str) -> Option<&str> {
+                    self.attrs.get(key).map(String::as_str)
                 }
             }
         }
@@ -78,7 +86,7 @@ pub mod graph {
 
             impl Node {
                 pub fn new(name: &str) -> Self {
-                    Node {
+                    Self {
                         name: name.to_string(),
                         ..Self::default()
                     }
@@ -87,12 +95,12 @@ pub mod graph {
                 pub fn with_attrs(mut self, attrs: &[(&str, &str)]) -> Self {
                     self.attrs = attrs
                         .iter()
-                        .map(|(key, value)| (key.to_string(), value.to_string()))
+                        .map(|(key, value)| ((*key).to_string(), (*value).to_string()))
                         .collect();
                     self
                 }
 
-                pub fn get_attr(&self, name: &str) -> Option<&str> {
+                pub fn attr(&self, name: &str) -> Option<&str> {
                     self.attrs.get(name).map(String::as_str)
                 }
             }
