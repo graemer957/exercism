@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 const HUNDRED: u64 = 100;
 const UNITS: [(u32, &str); 6] = [
     (18, "quintillion"),
@@ -70,17 +72,17 @@ fn less_than_one_hundred(n: u64) -> String {
     }
 }
 
-fn hundreds(n: u64) -> Vec<String> {
+fn hundreds(n: u64) -> Vec<Cow<'static, str>> {
     let mut result = Vec::new();
 
     let hundreds = n / HUNDRED;
     if hundreds != 0 {
-        result.push(format!("{} hundred", ones(hundreds)));
+        result.push(Cow::from(format!("{} hundred", ones(hundreds))));
     }
 
     let remaining = n % HUNDRED;
     if remaining != 0 {
-        result.push(less_than_one_hundred(remaining));
+        result.push(Cow::from(less_than_one_hundred(remaining)));
     }
 
     result
@@ -92,14 +94,14 @@ pub fn encode(n: u64) -> String {
     }
 
     let mut remaining = n;
-    let mut result = Vec::new();
+    let mut result: Vec<Cow<str>> = Vec::new();
 
     for (zeros, unit_description) in UNITS {
         let size = 10_u64.pow(zeros);
         let quantity = remaining / size;
         if quantity > 0 {
             result.append(&mut hundreds(quantity));
-            result.push(unit_description.to_string());
+            result.push(Cow::from(unit_description));
         }
         remaining %= size;
     }
