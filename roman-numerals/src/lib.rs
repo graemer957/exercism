@@ -9,49 +9,44 @@ pub struct Roman {
 }
 
 fn number_to_numerals(
+    f: &mut Formatter<'_>,
     number: u32,
     lower: &'static str,
     mid: &'static str,
     upper: &'static str,
-) -> Vec<&'static str> {
-    let mut numerals = Vec::new();
-
+) -> Result {
     match number {
-        x if (1..=3).contains(&x) => (1..=x).for_each(|_| numerals.push(lower)),
-        4 => {
-            numerals.push(lower);
-            numerals.push(mid);
+        1..=3 => {
+            for _ in 1..=number {
+                write!(f, "{lower}")?;
+            }
         }
-        5 => numerals.push(mid),
-        x if (6..=8).contains(&x) => {
-            numerals.push(mid);
-            (6..=x).for_each(|_| numerals.push(lower));
+        4 => write!(f, "{lower}{mid}")?,
+        5 => write!(f, "{mid}")?,
+        6..=8 => {
+            write!(f, "{mid}")?;
+            for _ in 6..=number {
+                write!(f, "{lower}")?;
+            }
         }
-        9 => {
-            numerals.push(lower);
-            numerals.push(upper);
-        }
+        9 => write!(f, "{lower}{upper}")?,
         _ => {}
     }
 
-    numerals
+    Ok(())
 }
 
 impl Display for Roman {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        let mut numerals = Vec::new();
-
-        numerals.push(match self.thousands {
-            1 => "M",
-            2 => "MM",
-            3 => "MMM",
-            _ => "",
-        });
-        numerals.append(&mut number_to_numerals(self.hundreds, "C", "D", "M"));
-        numerals.append(&mut number_to_numerals(self.tens, "X", "L", "C"));
-        numerals.append(&mut number_to_numerals(self.ones, "I", "V", "X"));
-
-        write!(f, "{}", numerals.join(""))
+        match self.thousands {
+            1 => write!(f, "M")?,
+            2 => write!(f, "MM")?,
+            3 => write!(f, "MMM")?,
+            _ => {}
+        }
+        number_to_numerals(f, self.hundreds, "C", "D", "M")?;
+        number_to_numerals(f, self.tens, "X", "L", "C")?;
+        number_to_numerals(f, self.ones, "I", "V", "X")
     }
 }
 
