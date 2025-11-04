@@ -4,36 +4,30 @@
 #[must_use]
 pub fn get_diamond(c: char) -> Vec<String> {
     let number_of_letters = c as u32 - 64;
-    dbg!(number_of_letters);
-
-    let mut result =
-        Vec::with_capacity(number_of_letters as usize + number_of_letters as usize - 1);
 
     let rows = (number_of_letters * 2) - 1;
+    let mut result = Vec::with_capacity(rows as usize);
+
     for row in 1..=rows {
         let mut line = String::new();
-        dbg!(row);
-        let letter_number = if dbg!(row > number_of_letters) {
-            dbg!(rows - row + 1)
+        let letter_number = if row > number_of_letters {
+            rows - row + 1
         } else {
-            dbg!(row)
+            row
         };
-        dbg!(letter_number);
 
-        let outter = number_of_letters - letter_number;
-        dbg!(outter);
+        let outter_spaces = number_of_letters - letter_number;
+        let inner_spaces = inner_spacing(letter_number);
 
-        let inner = inner_spacing(letter_number);
-        dbg!(inner);
-
-        let c = char::from_u32(letter_number + 64).expect("Letter should be between A to Z");
-        (1..=outter).for_each(|_| line.push(' '));
-        line.push(c);
-        (1..=inner).for_each(|_| line.push(' '));
+        let character =
+            char::from_u32(letter_number + 64).expect("Letter should be between A to Z");
+        (1..=outter_spaces).for_each(|_| line.push(' '));
+        line.push(character);
+        (1..=inner_spaces).for_each(|_| line.push(' '));
         if letter_number != 1 {
-            line.push(c);
+            line.push(character);
         }
-        (1..=outter).for_each(|_| line.push(' '));
+        (1..=outter_spaces).for_each(|_| line.push(' '));
 
         result.push(line);
     }
