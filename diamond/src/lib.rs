@@ -1,9 +1,11 @@
-/// # Panics
-///
-/// If `c` is not a between "A" to "Z"
 #[must_use]
 pub fn get_diamond(c: char) -> Vec<String> {
-    let number_of_letters = c as u32 - 64;
+    let c = c as u32;
+    if c < 'A' as u32 || c > 'Z' as u32 {
+        return vec![];
+    }
+
+    let number_of_letters = c - 64;
 
     let rows = (number_of_letters * 2) - 1;
     let mut result = Vec::with_capacity(rows as usize);
@@ -19,8 +21,9 @@ pub fn get_diamond(c: char) -> Vec<String> {
         let outter_spaces = number_of_letters - letter_number;
         let inner_spaces = inner_spacing(letter_number);
 
-        let character =
-            char::from_u32(letter_number + 64).expect("Letter should be between A to Z");
+        let Some(character) = char::from_u32(letter_number + 64) else {
+            continue;
+        };
         (1..=outter_spaces).for_each(|_| line.push(' '));
         line.push(character);
         (1..=inner_spaces).for_each(|_| line.push(' '));
