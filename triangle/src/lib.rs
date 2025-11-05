@@ -10,25 +10,30 @@ impl<T> Triangle<T>
 where
     T: Add<Output = T> + Copy + Default + PartialOrd,
 {
-    pub fn build(sides: [T; 3]) -> Option<Self> {
-        let default = T::default();
-
-        match (sides[0], sides[1], sides[2]) {
-            (a, b, c) if a == default || b == default || c == default => None,
-            (a, b, c) if a + b >= c && a + c >= b && b + c >= a => Some(Self { a, b, c }),
-            _ => None,
+    pub fn build(mut sides: [T; 3]) -> Option<Self> {
+        if sides.iter().any(|&side| side == T::default()) {
+            return None;
         }
+
+        // By sorting we can simplify the `is_` functions
+        sides.sort_unstable_by(|x, y| x.partial_cmp(y).unwrap());
+        let [a, b, c] = sides;
+        if a + b < c {
+            return None;
+        }
+
+        Some(Self { a, b, c })
     }
 
     pub fn is_equilateral(&self) -> bool {
-        self.a == self.b && self.b == self.c
+        self.a == self.c
     }
 
     pub fn is_scalene(&self) -> bool {
-        self.a != self.b && self.b != self.c && self.a != self.c
+        self.a != self.b && self.b != self.c
     }
 
     pub fn is_isosceles(&self) -> bool {
-        self.a == self.b || self.b == self.c || self.a == self.c
+        self.a == self.b || self.b == self.c
     }
 }
